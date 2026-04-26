@@ -14,7 +14,6 @@
       <div class="controls-info">🎮 Мышь - поворот | 🔴 Левая кнопка - ускорение</div>
     </div>
     
-    <!-- Панель скинов (только при Game Over) -->
     <div class="skin-panel" v-if="!gameRunning">
       <div class="skin-title">🎨 ВЫБЕРИ СКИН ДЛЯ НОВОЙ ИГРЫ</div>
       <div class="skins">
@@ -118,7 +117,6 @@ export default {
       this.isBoosting = false;
       this.currentSkin = this.selectedSkin; // Применяем выбранный скин
       
-      // Создаем змею
       this.snake = [];
       const startX = this.mapSize / 2;
       const startY = this.mapSize / 2;
@@ -129,7 +127,6 @@ export default {
         });
       }
       
-      // Создаем еду
       this.foods = [];
       for (let i = 0; i < 200; i++) {
         this.foods.push({
@@ -140,7 +137,6 @@ export default {
         });
       }
       
-      // Создаем ботов
       this.bots = [];
       for (let i = 0; i < 15; i++) {
         const botBody = [];
@@ -197,10 +193,8 @@ export default {
         });
       }
       
-      // Удаляем бота
       this.bots.splice(botIndex, 1);
       
-      // Добавляем нового бота
       setTimeout(() => {
         if (this.bots.length < 12) {
           const newBotBody = [];
@@ -224,7 +218,6 @@ export default {
       if (!this.gameRunning) return;
       if (this.snake.length === 0) return;
       
-      // Движение головы игрока
       const head = this.snake[0];
       const newHead = {
         x: head.x + Math.cos(this.snakeAngle) * this.currentSpeed,
@@ -239,11 +232,9 @@ export default {
       
       this.snake.unshift(newHead);
       
-      // Ограничение длины
       const maxLength = 30 + Math.floor(this.score / 2);
       while (this.snake.length > maxLength) this.snake.pop();
       
-      // Поедание еды
       for (let i = 0; i < this.foods.length; i++) {
         const food = this.foods[i];
         if (this.distance(this.snake[0], food) < 12) {
@@ -260,7 +251,6 @@ export default {
         }
       }
       
-      // Движение ботов
       for (const bot of this.bots) {
         bot.timer++;
         if (bot.timer > 40) {
@@ -283,7 +273,6 @@ export default {
         if (bot.body.length > 30) bot.body.pop();
       }
       
-      // ПРАВИЛЬНАЯ МЕХАНИКА СТОЛКНОВЕНИЙ
       for (let i = 0; i < this.bots.length; i++) {
         const bot = this.bots[i];
         
@@ -303,7 +292,6 @@ export default {
           return;
         }
         
-        // 2. ЕСЛИ ГОЛОВА БОТА КАСАЕТСЯ МОЕГО ТЕЛА (НЕ ГОЛОВЫ!) - БОТ УМИРАЕТ
         const botHead = bot.body[0];
         let botDied = false;
         
@@ -326,11 +314,9 @@ export default {
     draw() {
       if (!this.ctx) return;
       
-      // Очистка фона
       this.ctx.fillStyle = '#0a0a0a';
       this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
       
-      // Рисуем еду
       for (const food of this.foods) {
         const x = food.x - this.camera.x;
         const y = food.y - this.camera.y;
@@ -349,7 +335,6 @@ export default {
         }
       }
       
-      // Рисуем ботов
       this.ctx.shadowBlur = 5;
       for (const bot of this.bots) {
         this.ctx.strokeStyle = bot.color;
@@ -396,7 +381,6 @@ export default {
         this.ctx.fillText(`${bot.points}`, hx - 12, hy - 12);
       }
       
-      // Рисуем игрока с выбранным скином
       if (this.snake.length > 0) {
         this.ctx.shadowBlur = 10;
         this.ctx.shadowColor = '#00ffcc';
